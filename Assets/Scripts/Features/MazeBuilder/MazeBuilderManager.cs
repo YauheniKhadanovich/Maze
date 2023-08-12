@@ -1,4 +1,3 @@
-using System;
 using Modules.MazeGenerator.Data;
 using Modules.MazeGenerator.Services.Impl;
 using UnityEngine;
@@ -7,12 +6,10 @@ namespace Features.MazeBuilder
 {
     public class MazeBuilderManager : MonoBehaviour
     {
-        private MazeGenerationService _mazeGenerationService = new MazeGenerationService();
+        private MazeGenerationService _mazeGenerationService = new();
         [SerializeField] 
         private GameObject _wallPrefab;
-        [SerializeField] 
-        private GameObject _stonePrefab;
-        
+
         private void Start()
         {
             _mazeGenerationService.GenerateMaze();
@@ -23,7 +20,7 @@ namespace Features.MazeBuilder
                     var v = _mazeGenerationService.MazeData.Field[x, y];
                     if (v.State == CellState.Wall)
                     {
-                        var g = GameObject.Instantiate(_wallPrefab, new Vector3(v.Position.x, 0, v.Position.y), Quaternion.identity);
+                        Instantiate(_wallPrefab, new Vector3(v.Position.x, 0, v.Position.y), Quaternion.identity);
                     }
                 }
             }
