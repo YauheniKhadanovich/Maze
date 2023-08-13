@@ -16,9 +16,6 @@ namespace Zenject
         
         public override void InstallBindings()
         {
-            // InstallViews();
-            // InstallPresenters();
-            // InstallFeatures();
             InstallFeatures();
             InstallModules();
         }
