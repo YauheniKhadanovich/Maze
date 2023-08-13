@@ -19,7 +19,6 @@ namespace Zenject
             InstallFeatures();
             InstallModules();
         }
-
         
         private void InstallFeatures()
         {
