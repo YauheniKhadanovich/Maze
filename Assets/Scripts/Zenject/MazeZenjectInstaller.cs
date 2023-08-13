@@ -1,0 +1,38 @@
+using System;
+using Features.MazeBuilder;
+using Features.MazeBuilder.Impl;
+using Modules.MazeGenerator.Facade;
+using Modules.MazeGenerator.Facade.Impl;
+using Modules.MazeGenerator.Services;
+using Modules.MazeGenerator.Services.Impl;
+using UnityEngine;
+
+namespace Zenject
+{
+    public class MazeZenjectInstaller : MonoInstaller
+    {
+        [SerializeField] 
+        private MazeBuildManager _mazeBuilder;
+        
+        public override void InstallBindings()
+        {
+            // InstallViews();
+            // InstallPresenters();
+            // InstallFeatures();
+            InstallFeatures();
+            InstallModules();
+        }
+
+        
+        private void InstallFeatures()
+        {
+            Container.Bind(typeof(IInitializable), typeof(IDisposable), typeof(IMazeBuildManager)).To<MazeBuildManager>().FromInstance(_mazeBuilder).AsCached();
+        }
+        
+        private void InstallModules()
+        {
+            Container.Bind<IMazeGenerationFacade>().To<MazeGenerationFacade>().AsCached();        
+            Container.Bind<IMazeGenerationService>().To<MazeGenerationService>().AsCached();        
+        }
+    }
+}
