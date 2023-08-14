@@ -35,6 +35,24 @@ public partial class @MazeControls : IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""PrimaryContact"",
+                    ""type"": ""PassThrough"",
+                    ""id"": ""684651c8-871d-451c-89fb-1ef7994620b6"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": ""Press"",
+                    ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""PrimaryPosition"",
+                    ""type"": ""PassThrough"",
+                    ""id"": ""91b0964c-b5f4-4095-8e12-d0052aab75d6"",
+                    ""expectedControlType"": ""Vector2"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
                 }
             ],
             ""bindings"": [
@@ -92,15 +110,45 @@ public partial class @MazeControls : IInputActionCollection2, IDisposable
                     ""action"": ""Movements"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""7e6ffd1b-51fe-4649-912f-6d359dfedfa5"",
+                    ""path"": ""<Touchscreen>/primaryTouch/press"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""MazeScheme"",
+                    ""action"": ""PrimaryContact"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""fb476759-81eb-4631-9179-e9e5663b4d90"",
+                    ""path"": ""<Touchscreen>/primaryTouch/position"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""MazeScheme"",
+                    ""action"": ""PrimaryPosition"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
     ],
-    ""controlSchemes"": []
+    ""controlSchemes"": [
+        {
+            ""name"": ""MazeScheme"",
+            ""bindingGroup"": ""MazeScheme"",
+            ""devices"": []
+        }
+    ]
 }");
         // MazeMap
         m_MazeMap = asset.FindActionMap("MazeMap", throwIfNotFound: true);
         m_MazeMap_Movements = m_MazeMap.FindAction("Movements", throwIfNotFound: true);
+        m_MazeMap_PrimaryContact = m_MazeMap.FindAction("PrimaryContact", throwIfNotFound: true);
+        m_MazeMap_PrimaryPosition = m_MazeMap.FindAction("PrimaryPosition", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -161,11 +209,15 @@ public partial class @MazeControls : IInputActionCollection2, IDisposable
     private readonly InputActionMap m_MazeMap;
     private IMazeMapActions m_MazeMapActionsCallbackInterface;
     private readonly InputAction m_MazeMap_Movements;
+    private readonly InputAction m_MazeMap_PrimaryContact;
+    private readonly InputAction m_MazeMap_PrimaryPosition;
     public struct MazeMapActions
     {
         private @MazeControls m_Wrapper;
         public MazeMapActions(@MazeControls wrapper) { m_Wrapper = wrapper; }
         public InputAction @Movements => m_Wrapper.m_MazeMap_Movements;
+        public InputAction @PrimaryContact => m_Wrapper.m_MazeMap_PrimaryContact;
+        public InputAction @PrimaryPosition => m_Wrapper.m_MazeMap_PrimaryPosition;
         public InputActionMap Get() { return m_Wrapper.m_MazeMap; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -178,6 +230,12 @@ public partial class @MazeControls : IInputActionCollection2, IDisposable
                 @Movements.started -= m_Wrapper.m_MazeMapActionsCallbackInterface.OnMovements;
                 @Movements.performed -= m_Wrapper.m_MazeMapActionsCallbackInterface.OnMovements;
                 @Movements.canceled -= m_Wrapper.m_MazeMapActionsCallbackInterface.OnMovements;
+                @PrimaryContact.started -= m_Wrapper.m_MazeMapActionsCallbackInterface.OnPrimaryContact;
+                @PrimaryContact.performed -= m_Wrapper.m_MazeMapActionsCallbackInterface.OnPrimaryContact;
+                @PrimaryContact.canceled -= m_Wrapper.m_MazeMapActionsCallbackInterface.OnPrimaryContact;
+                @PrimaryPosition.started -= m_Wrapper.m_MazeMapActionsCallbackInterface.OnPrimaryPosition;
+                @PrimaryPosition.performed -= m_Wrapper.m_MazeMapActionsCallbackInterface.OnPrimaryPosition;
+                @PrimaryPosition.canceled -= m_Wrapper.m_MazeMapActionsCallbackInterface.OnPrimaryPosition;
             }
             m_Wrapper.m_MazeMapActionsCallbackInterface = instance;
             if (instance != null)
@@ -185,12 +243,29 @@ public partial class @MazeControls : IInputActionCollection2, IDisposable
                 @Movements.started += instance.OnMovements;
                 @Movements.performed += instance.OnMovements;
                 @Movements.canceled += instance.OnMovements;
+                @PrimaryContact.started += instance.OnPrimaryContact;
+                @PrimaryContact.performed += instance.OnPrimaryContact;
+                @PrimaryContact.canceled += instance.OnPrimaryContact;
+                @PrimaryPosition.started += instance.OnPrimaryPosition;
+                @PrimaryPosition.performed += instance.OnPrimaryPosition;
+                @PrimaryPosition.canceled += instance.OnPrimaryPosition;
             }
         }
     }
     public MazeMapActions @MazeMap => new MazeMapActions(this);
+    private int m_MazeSchemeSchemeIndex = -1;
+    public InputControlScheme MazeSchemeScheme
+    {
+        get
+        {
+            if (m_MazeSchemeSchemeIndex == -1) m_MazeSchemeSchemeIndex = asset.FindControlSchemeIndex("MazeScheme");
+            return asset.controlSchemes[m_MazeSchemeSchemeIndex];
+        }
+    }
     public interface IMazeMapActions
     {
         void OnMovements(InputAction.CallbackContext context);
+        void OnPrimaryContact(InputAction.CallbackContext context);
+        void OnPrimaryPosition(InputAction.CallbackContext context);
     }
 }
