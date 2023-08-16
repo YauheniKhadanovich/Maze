@@ -21,12 +21,6 @@ namespace Modules.MazeGenerator.Data
             }
         }
 
-        public Cell GetCell(Vector3 position)
-        {
-            TryGetCell(new Vector2Int((int)position.x, (int)position.z), out var cell);
-            return cell;
-        }
-        
         public Cell GetCell(Vector2Int position)
         {
             TryGetCell(position, out var cell);
@@ -36,23 +30,23 @@ namespace Modules.MazeGenerator.Data
         public void SetPlayerPosition(Vector2Int position)
         {
             TryGetCell(position, out var cell);
-            cell.SetState(CellState.Start);
+            cell.SetState(CellType.Start);
             Field[cell.Position.x, cell.Position.y] = cell;
         }
 
         public Cell MakeWay(Vector2Int from, Directions direction)
         {
             TryGetCell(from, out var cell);
-            cell.SetState(CellState.Floor);
+            cell.SetState(CellType.Floor);
             Field[cell.Position.x, cell.Position.y] = cell;
             
             TryGetCell(from, direction, out var nextCell);
-            nextCell.SetState(CellState.Floor);
+            nextCell.SetState(CellType.Floor);
             nextCell.SetPreviousDirection(direction);
             Field[nextCell.Position.x, nextCell.Position.y] = nextCell;
 
             TryGetWay(from, direction, out var way);
-            way.SetState(CellState.Floor);
+            way.SetState(CellType.Floor);
             Field[way.Position.x, way.Position.y] = way;
 
             return nextCell;
@@ -64,7 +58,7 @@ namespace Modules.MazeGenerator.Data
 
             if (TryGetCell(cell.Position, Directions.Forward, out var neighborAbove))
             {
-                if (neighborAbove.State == CellState.Wall)
+                if (neighborAbove.Type == CellType.Wall)
                 {
                     undefinedDirections.Add(Directions.Forward);
                 }
@@ -72,7 +66,7 @@ namespace Modules.MazeGenerator.Data
 
             if (TryGetCell(cell.Position, Directions.Back, out var neighborBelow))
             {
-                if (neighborBelow.State == CellState.Wall)
+                if (neighborBelow.Type == CellType.Wall)
                 {
                     undefinedDirections.Add(Directions.Back);
                 }
@@ -80,7 +74,7 @@ namespace Modules.MazeGenerator.Data
 
             if (TryGetCell(cell.Position, Directions.Left, out var neighborLeft))
             {
-                if (neighborLeft.State == CellState.Wall)
+                if (neighborLeft.Type == CellType.Wall)
                 {
                     undefinedDirections.Add(Directions.Left);
                 }
@@ -88,7 +82,7 @@ namespace Modules.MazeGenerator.Data
 
             if (TryGetCell(cell.Position, Directions.Right, out var neighborRight))
             {
-                if (neighborRight.State == CellState.Wall)
+                if (neighborRight.Type == CellType.Wall)
                 {
                     undefinedDirections.Add(Directions.Right);
                 }
@@ -97,9 +91,9 @@ namespace Modules.MazeGenerator.Data
             return undefinedDirections.Count > 0;
         }
         
-        private void SetCell(Vector2Int position, CellState state = CellState.Wall)
+        private void SetCell(Vector2Int position, CellType type = CellType.Wall)
         {
-            Field[position.x, position.y] = new Cell(position, state);
+            Field[position.x, position.y] = new Cell(position, type);
         }
 
         private bool TryGetCell(Vector2Int position, out Cell cell)

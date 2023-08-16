@@ -1,10 +1,10 @@
 namespace Modules.MazeGenerator.Data
 {
-    public enum CellState
+    public enum CellType
     {
         Wall,
         Floor,
         Start,
-        Finish,
+        Diamond,
     }
 }

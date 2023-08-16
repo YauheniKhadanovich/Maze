@@ -8,7 +8,7 @@ namespace Modules.MazeGenerator.Services.Impl
     {
         private readonly Vector2Int _startGenerationPosition = new(1, 1);
 
-        public MazeData MazeData { get; } = new(23, 23);
+        public MazeData MazeData { get; } = new(5, 5);
 
         public void GenerateMaze()
         {

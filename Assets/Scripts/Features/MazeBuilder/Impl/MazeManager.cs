@@ -15,6 +15,10 @@ namespace Features.MazeBuilder.Impl
         [SerializeField] 
         private GameObject _wallPrefab;
         [SerializeField] 
+        private GameObject _diamondFrefab;
+        [SerializeField] 
+        private GameObject _floorFrefab;
+        [SerializeField] 
         private MazePlayer _playerPrefab;
 
         public void Initialize()
@@ -43,17 +47,29 @@ namespace Features.MazeBuilder.Impl
                 for (var y = 0; y < _mazeGenerationFacade.MazeData.Field.GetLongLength(1); y++)
                 {
                     var v = _mazeGenerationFacade.MazeData.Field[x, y];
-                    switch (v.State)
+                    switch (v.Type)
                     {
-                        case CellState.Wall:
+                        case CellType.Wall:
                             Instantiate(_wallPrefab, new Vector3(v.Position.x, 0, v.Position.y), Quaternion.identity);
                             break;
-                        case CellState.Start:
+                        case CellType.Start:
                             var player = Instantiate(_playerPrefab, new Vector3(v.Position.x, 0, v.Position.y), Quaternion.identity);
                             player.SetData(this, v.Position);
+                            SpawnFloor(new Vector3(v.Position.x, 0, v.Position.y));
+                            break;
+                        case CellType.Diamond:
+                            Instantiate(_diamondFrefab, new Vector3(v.Position.x, 0, v.Position.y), Quaternion.identity);
+                            break;
+                        default:
+                            SpawnFloor(new Vector3(v.Position.x, 0, v.Position.y));
                             break;
                     }
                 }
+            }
+
+            void SpawnFloor(Vector3 position)
+            {
+                Instantiate(_floorFrefab, position, Quaternion.identity);
             }
         }
     }

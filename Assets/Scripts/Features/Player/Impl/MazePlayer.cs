@@ -53,7 +53,7 @@ namespace Features.Player.Impl
         private void ProceedMovement(Vector2Int direction)
         {
             var nextCell = _mazeManager.GetMazeData().GetCell(_mazePosition + direction);
-            if (nextCell.State != CellState.Wall)
+            if (nextCell.Type != CellType.Wall)
             {
                 _mazePosition = nextCell.Position;
             }

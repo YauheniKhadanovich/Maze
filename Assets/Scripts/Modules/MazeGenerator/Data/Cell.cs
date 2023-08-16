@@ -6,20 +6,20 @@ namespace Modules.MazeGenerator.Data
     {
         public Vector2Int Position { get; }
 
-        public CellState State { get; private set; }
+        public CellType Type { get; private set; }
         
         public Directions PreviousDirection { get; private set; }
 
-        public Cell(Vector2Int position, CellState state)
+        public Cell(Vector2Int position, CellType type)
         {
             Position = position;
-            State = state;
+            Type = type;
             PreviousDirection = Directions.Left;
         }
 
-        public void SetState(CellState state)
+        public void SetState(CellType type)
         {
-            State = state;
+            Type = type;
         }
 
         public void SetPreviousDirection(Directions previousDirection)
