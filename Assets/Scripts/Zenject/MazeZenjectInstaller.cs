@@ -12,7 +12,7 @@ namespace Zenject
     public class MazeZenjectInstaller : MonoInstaller
     {
         [SerializeField] 
-        private MazeBuildManager _mazeBuilder;
+        private MazeManager _mazeBuilder;
         
         public override void InstallBindings()
         {
@@ -22,7 +22,7 @@ namespace Zenject
         
         private void InstallFeatures()
         {
-            Container.Bind(typeof(IInitializable), typeof(IDisposable), typeof(IMazeBuildManager)).To<MazeBuildManager>().FromInstance(_mazeBuilder).AsCached();
+            Container.Bind(typeof(IInitializable), typeof(IDisposable), typeof(IMazeManager)).To<MazeManager>().FromInstance(_mazeBuilder).AsCached();
         }
         
         private void InstallModules()

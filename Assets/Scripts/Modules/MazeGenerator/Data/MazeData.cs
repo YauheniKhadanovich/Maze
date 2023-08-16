@@ -8,15 +8,36 @@ namespace Modules.MazeGenerator.Data
     {
         public Cell[,] Field { get; }
 
+        public MazeData(int xLength, int yLength)
+        {
+            Field = new Cell[xLength, yLength];
+
+            for (var x = 0; x < xLength; x++)
+            {
+                for (var y = 0; y < xLength; y++)
+                {
+                    SetCell(new Vector2Int(x, y));
+                }
+            }
+        }
+
+        public Cell GetCell(Vector3 position)
+        {
+            TryGetCell(new Vector2Int((int)position.x, (int)position.z), out var cell);
+            return cell;
+        }
+        
         public Cell GetCell(Vector2Int position)
         {
             TryGetCell(position, out var cell);
             return cell;
         }
 
-        public void SetCell(Vector2Int position, CellState state = CellState.Wall)
+        public void SetPlayerPosition(Vector2Int position)
         {
-            Field[position.x, position.y] = new Cell(position, state);
+            TryGetCell(position, out var cell);
+            cell.SetState(CellState.Start);
+            Field[cell.Position.x, cell.Position.y] = cell;
         }
 
         public Cell MakeWay(Vector2Int from, Directions direction)
@@ -35,19 +56,6 @@ namespace Modules.MazeGenerator.Data
             Field[way.Position.x, way.Position.y] = way;
 
             return nextCell;
-        }
-
-        public MazeData(int xLength, int yLength)
-        {
-            Field = new Cell[xLength, yLength];
-
-            for (var x = 0; x < xLength; x++)
-            {
-                for (var y = 0; y < xLength; y++)
-                {
-                    SetCell(new Vector2Int(x, y));
-                }
-            }
         }
         
         public bool TryGetUndefinedDirections(Cell cell, out List<Directions> undefinedDirections)
@@ -87,6 +95,11 @@ namespace Modules.MazeGenerator.Data
             }
 
             return undefinedDirections.Count > 0;
+        }
+        
+        private void SetCell(Vector2Int position, CellState state = CellState.Wall)
+        {
+            Field[position.x, position.y] = new Cell(position, state);
         }
 
         private bool TryGetCell(Vector2Int position, out Cell cell)

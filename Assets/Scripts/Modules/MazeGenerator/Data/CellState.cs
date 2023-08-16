@@ -3,6 +3,8 @@ namespace Modules.MazeGenerator.Data
     public enum CellState
     {
         Wall,
-        Floor
+        Floor,
+        Start,
+        Finish,
     }
 }

@@ -6,12 +6,14 @@ namespace Modules.MazeGenerator.Services.Impl
 {
     public class MazeGenerationService : IMazeGenerationService
     {
-        public MazeData MazeData { get; } = new(51, 51);
+        private readonly Vector2Int _startGenerationPosition = new(1, 1);
+
+        public MazeData MazeData { get; } = new(23, 23);
 
         public void GenerateMaze()
         {
             var allFrontiers = new List<Vector2Int>();
-            allFrontiers.Add(MazeData.GetCell(new Vector2Int(25, 25)).Position);
+            allFrontiers.Add(MazeData.GetCell(_startGenerationPosition).Position);
             while (allFrontiers.Count > 0)
             {
                 var currentCell = MazeData.GetCell(allFrontiers[Random.Range(0, allFrontiers.Count)]);
@@ -36,6 +38,7 @@ namespace Modules.MazeGenerator.Services.Impl
                     allFrontiers.Remove(currentCell.Position);
                 }
             }
+            MazeData.SetPlayerPosition(_startGenerationPosition);
         }
     }
 }
