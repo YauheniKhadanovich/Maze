@@ -4,7 +4,7 @@ namespace Modules.MazeGenerator.Facade
 {
     public interface IMazeGenerationFacade
     {
-        public void GenerateMaze();
+        public void GenerateMaze(int xCount, int yCount);
 
         MazeData MazeData { get; }
     }

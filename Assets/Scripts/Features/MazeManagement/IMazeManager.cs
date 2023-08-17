@@ -1,7 +1,6 @@
-namespace Features.MazeBuilder
+namespace Features.MazeManagement
 {
     public interface IMazeManager
     {
-        
     }
 }

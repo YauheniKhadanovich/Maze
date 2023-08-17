@@ -1,4 +1,4 @@
-using Features.MazeBuilder.Impl;
+using Features.MazeManagement.Impl;
 using Modules.MazeGenerator.Data;
 using UnityEngine;
 
@@ -8,6 +8,7 @@ namespace Features.Player.Impl
     {
         private IPlayerInput _playerInput;
         private Vector2Int _mazePosition;
+        
         private MazeManager _mazeManager;
 
         private void Awake()

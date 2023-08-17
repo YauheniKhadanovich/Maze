@@ -8,10 +8,11 @@ namespace Modules.MazeGenerator.Services.Impl
     {
         private readonly Vector2Int _startGenerationPosition = new(1, 1);
 
-        public MazeData MazeData { get; } = new(5, 5);
+        public MazeData MazeData { get; private set; } = new(5, 5);
 
-        public void GenerateMaze()
+        public void GenerateMaze(int xCount, int yCount)
         {
+            MazeData = new MazeData(xCount, yCount);
             var allFrontiers = new List<Vector2Int>();
             allFrontiers.Add(MazeData.GetCell(_startGenerationPosition).Position);
             while (allFrontiers.Count > 0)

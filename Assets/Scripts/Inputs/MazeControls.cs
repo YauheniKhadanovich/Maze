@@ -134,6 +134,34 @@ public partial class @MazeControls : IInputActionCollection2, IDisposable
                     ""isPartOfComposite"": false
                 }
             ]
+        },
+        {
+            ""name"": ""UI"",
+            ""id"": ""6d02a7d5-cfba-4b8b-9308-793799b5b318"",
+            ""actions"": [
+                {
+                    ""name"": ""Start"",
+                    ""type"": ""Button"",
+                    ""id"": ""01a1f2ac-9e75-47e8-8cfa-8dd55e93790b"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": ""Press"",
+                    ""initialStateCheck"": false
+                }
+            ],
+            ""bindings"": [
+                {
+                    ""name"": """",
+                    ""id"": ""af5f4b58-77bf-4155-bcae-e03bdcabf6f6"",
+                    ""path"": ""<Gamepad>/buttonEast"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""MazeScheme"",
+                    ""action"": ""Start"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                }
+            ]
         }
     ],
     ""controlSchemes"": [
@@ -149,6 +177,9 @@ public partial class @MazeControls : IInputActionCollection2, IDisposable
         m_MazeMap_Movements = m_MazeMap.FindAction("Movements", throwIfNotFound: true);
         m_MazeMap_PrimaryContact = m_MazeMap.FindAction("PrimaryContact", throwIfNotFound: true);
         m_MazeMap_PrimaryPosition = m_MazeMap.FindAction("PrimaryPosition", throwIfNotFound: true);
+        // UI
+        m_UI = asset.FindActionMap("UI", throwIfNotFound: true);
+        m_UI_Start = m_UI.FindAction("Start", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -253,6 +284,39 @@ public partial class @MazeControls : IInputActionCollection2, IDisposable
         }
     }
     public MazeMapActions @MazeMap => new MazeMapActions(this);
+
+    // UI
+    private readonly InputActionMap m_UI;
+    private IUIActions m_UIActionsCallbackInterface;
+    private readonly InputAction m_UI_Start;
+    public struct UIActions
+    {
+        private @MazeControls m_Wrapper;
+        public UIActions(@MazeControls wrapper) { m_Wrapper = wrapper; }
+        public InputAction @Start => m_Wrapper.m_UI_Start;
+        public InputActionMap Get() { return m_Wrapper.m_UI; }
+        public void Enable() { Get().Enable(); }
+        public void Disable() { Get().Disable(); }
+        public bool enabled => Get().enabled;
+        public static implicit operator InputActionMap(UIActions set) { return set.Get(); }
+        public void SetCallbacks(IUIActions instance)
+        {
+            if (m_Wrapper.m_UIActionsCallbackInterface != null)
+            {
+                @Start.started -= m_Wrapper.m_UIActionsCallbackInterface.OnStart;
+                @Start.performed -= m_Wrapper.m_UIActionsCallbackInterface.OnStart;
+                @Start.canceled -= m_Wrapper.m_UIActionsCallbackInterface.OnStart;
+            }
+            m_Wrapper.m_UIActionsCallbackInterface = instance;
+            if (instance != null)
+            {
+                @Start.started += instance.OnStart;
+                @Start.performed += instance.OnStart;
+                @Start.canceled += instance.OnStart;
+            }
+        }
+    }
+    public UIActions @UI => new UIActions(this);
     private int m_MazeSchemeSchemeIndex = -1;
     public InputControlScheme MazeSchemeScheme
     {
@@ -267,5 +331,9 @@ public partial class @MazeControls : IInputActionCollection2, IDisposable
         void OnMovements(InputAction.CallbackContext context);
         void OnPrimaryContact(InputAction.CallbackContext context);
         void OnPrimaryPosition(InputAction.CallbackContext context);
+    }
+    public interface IUIActions
+    {
+        void OnStart(InputAction.CallbackContext context);
     }
 }

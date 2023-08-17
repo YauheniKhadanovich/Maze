@@ -11,9 +11,9 @@ namespace Modules.MazeGenerator.Facade.Impl
 
         public MazeData MazeData => _mazeGenerationService.MazeData;
 
-        public void GenerateMaze()
+        public void GenerateMaze(int xCount, int yCount)
         {
-            _mazeGenerationService.GenerateMaze();
+            _mazeGenerationService.GenerateMaze(xCount, yCount);
         }
     }
 }
