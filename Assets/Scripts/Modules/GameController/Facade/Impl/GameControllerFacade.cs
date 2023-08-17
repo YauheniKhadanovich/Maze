@@ -20,5 +20,10 @@ namespace Modules.GameController.Facade.Impl
         {
             GameStarted.Invoke();
         }
+        
+        public void StartNextGame()
+        {
+            _gameControllerService.StartNextGame();
+        }
     }
 }

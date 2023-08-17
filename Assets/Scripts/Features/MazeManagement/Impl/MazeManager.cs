@@ -63,7 +63,7 @@ namespace Features.MazeManagement.Impl
                     switch (v.Type)
                     {
                         case CellType.Wall:
-                            Instantiate(_wallPrefab, new Vector3(v.Position.x, 0, v.Position.y), Quaternion.identity);
+                         //   Instantiate(_wallPrefab, new Vector3(v.Position.x, 0, v.Position.y), Quaternion.identity);
                             break;
                         case CellType.Start:
                             if (_player)
@@ -76,6 +76,7 @@ namespace Features.MazeManagement.Impl
                             break;
                         case CellType.Diamond:
                             Instantiate(_diamondFrefab, new Vector3(v.Position.x, 0, v.Position.y), Quaternion.identity);
+                            SpawnFloor(new Vector3(v.Position.x, 0, v.Position.y));
                             break;
                         default:
                             SpawnFloor(new Vector3(v.Position.x, 0, v.Position.y));

@@ -15,7 +15,7 @@ namespace Modules.GameController.Service.Impl
 
         public void Initialize()
         {
-            _currentLevel = 1;
+            _currentLevel = 10;
         }
         
         public void StartNextGame()

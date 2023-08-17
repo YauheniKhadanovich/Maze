@@ -1,4 +1,4 @@
-using Modules.GameController.Service;
+using Modules.GameController.Facade;
 using Zenject;
 
 namespace Features.UI.Presenters.Impl
@@ -6,11 +6,11 @@ namespace Features.UI.Presenters.Impl
     public class GameViewPresenter : IGameViewPresenter
     {
         [Inject] 
-        private readonly IGameControllerService _gameControllerService;
+        private readonly IGameControllerFacade _gameControllerFacade;
         
         public void OnStartClicked()
         {
-            _gameControllerService.StartNextGame();
+            _gameControllerFacade.StartNextGame();
         }
     }
 }
