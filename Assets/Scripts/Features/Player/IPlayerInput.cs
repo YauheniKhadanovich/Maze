@@ -8,5 +8,8 @@ namespace Features.Player
         public event Action OnLeft;
         public event Action OnForward;
         public event Action OnBack;
+
+        void EnablePlayer();
+        void DisablePlayer();
     }
 }

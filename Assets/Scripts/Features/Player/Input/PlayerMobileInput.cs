@@ -19,15 +19,10 @@ namespace Features.Player.Input
             Controls.MazeMap.PrimaryContact.started += ContactStarted;
             Controls.MazeMap.PrimaryContact.canceled += ContactCanceled;
         }
-
-        private void OnEnable()
-        {
-            Controls.Enable();
-        }
-
+        
         private void OnDisable()
         {
-            Controls.Disable();
+            DisablePlayer();
         }
 
         private void ContactStarted(InputAction.CallbackContext context)

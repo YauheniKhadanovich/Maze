@@ -1,27 +1,30 @@
-using Features.UI.Presenters;
+using System;
 using UnityEngine;
 using UnityEngine.UI;
-using Zenject;
 
 namespace Features.UI.Views.Impl
 {
     public class GameView : MonoBehaviour, IGameView
     {
-        [Inject] 
-        private readonly IGameViewPresenter _gameViewPresenter;
+        public event Action StartButtonClicked = delegate { };
 
         [SerializeField] 
         private Button _startButton;
         
         private void Awake()
         {
-            _startButton .onClick.AddListener(OnStartClicked);
+            _startButton.onClick.AddListener(OnStartClicked);
         }
 
         private void OnStartClicked()
         {
-            _gameViewPresenter.OnStartClicked();
+            StartButtonClicked.Invoke();
             _startButton.gameObject.SetActive(false);   
+        }
+        
+        public void ShowMenu()
+        {
+            _startButton.gameObject.SetActive(true);
         }
     }
 }

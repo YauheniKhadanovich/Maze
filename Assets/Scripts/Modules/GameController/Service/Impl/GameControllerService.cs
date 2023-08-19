@@ -9,24 +9,26 @@ namespace Modules.GameController.Service.Impl
         [Inject] 
         private readonly IMazeGenerationFacade _mazeGeneration;
 
-        public event Action GameStarted = delegate { };
-        
-        private int _currentLevel = 0;
+        public event Action GameStartRequested = delegate { };
+        public event Action GameStopRequested = delegate { };
 
+        private int _currentLevel;
+        
         public void Initialize()
         {
-            _currentLevel = 10;
+            _currentLevel = 0;
         }
         
         public void StartNextGame()
         {
+            _currentLevel++;
             _mazeGeneration.GenerateMaze(3 + 2 * _currentLevel, 3 + 2 * _currentLevel);
-            BuildAndStart();
+            GameStartRequested.Invoke();
         }
-
-        private void BuildAndStart()
+        
+        public void StopCurrentGame()
         {
-            GameStarted.Invoke();
+            GameStopRequested.Invoke();
         }
     }
 }

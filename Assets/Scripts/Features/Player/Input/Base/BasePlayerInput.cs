@@ -18,6 +18,16 @@ namespace Features.Player.Input.Base
             Controls = new MazeControls();
         }
         
+        public void EnablePlayer()
+        {
+            Controls.Enable();
+        }
+        
+        public void DisablePlayer()
+        {
+            Controls.Disable();
+        }
+        
         protected void CheckDirection(Vector2 direction)
         {
             if (Vector2.Dot(Vector2.up, direction) > Threshold)

@@ -37,7 +37,7 @@ namespace Zenject
         private void InstallFeatures()
         {
             Container.Bind(typeof(IGameView)).To<GameView>().FromInstance(_gameView).AsCached();
-            Container.Bind<IGameViewPresenter>().To<GameViewPresenter>().AsCached();    
+            Container.Bind(typeof(IInitializable), typeof(IDisposable), typeof(IGameViewPresenter)).To<GameViewPresenter>().AsCached();    
             
             Container.Bind(typeof(IInitializable), typeof(IDisposable), typeof(IMazeManager)).To<MazeManager>().FromInstance(_mazeManager).AsCached();
             Container.Bind(typeof(ICameraManager)).To<CameraManager>().FromInstance(_cameraManager).AsCached();
