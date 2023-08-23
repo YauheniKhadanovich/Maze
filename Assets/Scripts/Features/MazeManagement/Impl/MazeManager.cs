@@ -1,6 +1,8 @@
 using System;
 using System.Collections;
 using Features.CameraManagement;
+using Features.Coin.Impl;
+using Features.Diamond.Impl;
 using Features.Player.Impl;
 using Modules.GameController.Facade;
 using Modules.MazeGenerator.Data;
@@ -23,8 +25,11 @@ namespace Features.MazeManagement.Impl
         
         public MazeData MazeData => _mazeGenerationFacade.MazeData;
         
+        
         [SerializeField] 
-        private GameObject _diamondFrefab;
+        private DiamondItem _diamondFrefab;
+        [SerializeField] 
+        private CoinItem _coinFrefab;
         [SerializeField] 
         private GameObject _floorFrefab;
         [SerializeField] 
@@ -108,6 +113,7 @@ namespace Features.MazeManagement.Impl
                             SpawnFloor(new Vector3(v.Position.x, 0, v.Position.y));
                             break;
                         default:
+                            Instantiate(_coinFrefab, new Vector3(v.Position.x, 0, v.Position.y), Quaternion.identity, lvlRoot.transform);
                             SpawnFloor(new Vector3(v.Position.x, 0, v.Position.y));
                             break;
                     }
@@ -134,7 +140,6 @@ namespace Features.MazeManagement.Impl
 
         private void OnDiamondTaken()
         {
-            Debug.Log("OnDiamondTaken");
             _diamonds++;
             _gameControllerFacade.StopCurrentGame();
         }

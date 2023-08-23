@@ -6,8 +6,8 @@ namespace Features.Player.Input
 {
     public class PlayerMobileInput : BasePlayerInput
     {
-        private const float _minDistance = 15f;
-        private const float _maxTime = 1f;
+        private const float MinDistance = 15f;
+        private const float MaxTime = 1f;
 
         private Vector2 _startPosition;
         private float _startTime;
@@ -36,7 +36,7 @@ namespace Features.Player.Input
             _endPosition = Controls.MazeMap.PrimaryPosition.ReadValue<Vector2>();
             _endTime = (float)context.time;
 
-            if (Vector3.Distance(_startPosition, _endPosition) >= _minDistance && (_endTime - _startTime) < _maxTime)
+            if (Vector3.Distance(_startPosition, _endPosition) >= MinDistance && (_endTime - _startTime) < MaxTime)
             {
                 Vector3 directionV3 = _endPosition - _startPosition;
                 var direction = new Vector2(directionV3.x, directionV3.y).normalized;

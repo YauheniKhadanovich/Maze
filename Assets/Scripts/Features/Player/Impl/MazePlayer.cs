@@ -14,6 +14,8 @@ namespace Features.Player.Impl
         private Vector2Int _mazePosition;
         private MazeManager _mazeManager;
 
+        private bool _isMovementInProgress = false;
+
         private void Awake()
         {
             _playerInput = GetComponent<IPlayerInput>();
@@ -46,7 +48,18 @@ namespace Features.Player.Impl
 
         private void Update()
         {
-            transform.position = new Vector3(_mazePosition.x,0, _mazePosition.y);
+            if (!_isMovementInProgress)
+            {
+                return;
+            }
+            
+            var destination = new Vector3(_mazePosition.x, 0, _mazePosition.y);
+            transform.position = Vector3.MoveTowards(transform.position, destination, Time.deltaTime * 15f);
+
+            if (Vector3.Distance(transform.position, destination) < 0.01f)
+            {
+                _isMovementInProgress = false;
+            }
         }
 
         private void MoveForward()
@@ -71,9 +84,15 @@ namespace Features.Player.Impl
 
         private void ProceedMovement(Vector2Int direction)
         {
-            var nextCell = _mazeManager.MazeData.GetCell(_mazePosition + direction);
-            if (nextCell.Type != CellType.Wall)
+            if (_isMovementInProgress)
             {
+                return;
+            }
+            
+            var nextCell = _mazeManager.MazeData.GetCell(_mazePosition + direction);
+            if (nextCell.Type != CellType.Wall && _mazePosition != nextCell.Position)
+            {
+                _isMovementInProgress = true;
                 _mazePosition = nextCell.Position;
             }
         }
@@ -84,6 +103,10 @@ namespace Features.Player.Impl
             {
                 Destroy(other.gameObject);
                 DiamondTaken.Invoke();
+            }
+            if (other.gameObject.CompareTag("Coin"))
+            {
+                Destroy(other.gameObject);
             }
         }
     }

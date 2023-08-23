@@ -193,7 +193,7 @@ Camera:
   m_Enabled: 1
   serializedVersion: 2
   m_ClearFlags: 2
-  m_BackGroundColor: {r: 0.07208972, g: 0.17613026, b: 0.33962262, a: 0}
+  m_BackGroundColor: {r: 0.3207547, g: 0.3207547, b: 0.3207547, a: 0}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
   m_FOVAxisMode: 0
@@ -239,7 +239,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 1
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 12.02, y: 0, z: 0}
 --- !u!114 &330585547
 MonoBehaviour:
@@ -993,11 +993,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 530c0280d8f042b5afd6c4fdfb2b0c11, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _diamondFrefab: {fileID: 3349970705354947175, guid: 179cae9dd62004521b3da2f3ce4c2f08,
+  _diamondFrefab: {fileID: 7410032240683879244, guid: 179cae9dd62004521b3da2f3ce4c2f08,
+    type: 3}
+  _coinFrefab: {fileID: 1906399957032586005, guid: da591d01590d2446587cf07d940b5cf0,
     type: 3}
   _floorFrefab: {fileID: 269095562651666364, guid: 299c5c30bdda146f483491f729e75831,
     type: 3}
-  _playerPrefab: {fileID: 3060915185457630407, guid: f5a396a493d1249d5ae8b236a8ae0b0d,
+  _playerPrefab: {fileID: 554340560698453019, guid: 4b5c92347196c457495bc1bd33f97b9f,
     type: 3}
   _root: {fileID: 92071588}
 --- !u!4 &1527232736
@@ -1310,7 +1312,7 @@ RectTransform:
   m_Children:
   - {fileID: 745697330}
   m_Father: {fileID: 0}
-  m_RootOrder: 0
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
