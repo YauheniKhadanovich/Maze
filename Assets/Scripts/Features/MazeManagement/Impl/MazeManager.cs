@@ -54,7 +54,7 @@ namespace Features.MazeManagement.Impl
         
         private void OnGameStartRequested()
         {
-            LevelCleared += Build;
+            LevelCleared += BuildAndStart;
             StartCoroutine(nameof(ClearLevelCoroutine));
         }
         
@@ -74,10 +74,11 @@ namespace Features.MazeManagement.Impl
             LevelCleared.Invoke();
         }
 
-        private void Build()
+        private void BuildAndStart()
         {
-            LevelCleared -= Build;
+            LevelCleared -= BuildAndStart;
             Build(_mazeGenerationFacade.MazeData);
+            _diamonds = 0;
             _cameraManager.PlayerCameraSetEnable(true);
             _cameraManager.NoPlayCameraSetEnable(false);
             _cameraManager.SetCameraTarget(_player.transform);
@@ -141,7 +142,10 @@ namespace Features.MazeManagement.Impl
         private void OnDiamondTaken()
         {
             _diamonds++;
-            _gameControllerFacade.StopCurrentGame();
+            if (_mazeGenerationFacade.MazeData.DiamondCount == _diamonds)
+            {
+                _gameControllerFacade.StopCurrentGame();
+            }
         }
         
         private void OnPlayerDestroyed()
