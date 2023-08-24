@@ -95,6 +95,13 @@ namespace Modules.MazeGenerator.Data
             return cell;
         }
 
+        public void DestroyCell(Vector2Int position)
+        {
+            TryGetCell(position, out var cell);
+            cell.DestroyCell();
+            Field[cell.Position.x, cell.Position.y] = cell;
+        }
+        
         private void SetDiamondPosition(Vector2Int position)
         {
             TryGetCell(position, out var cell);

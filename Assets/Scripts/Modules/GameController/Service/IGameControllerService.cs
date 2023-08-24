@@ -5,10 +5,11 @@ namespace Modules.GameController.Service
     public interface IGameControllerService
     {
         event Action GameStartRequested;
-        event Action GameStopRequested;
+        event Action<bool> LevelDone;
 
-        public void StartNextGame();
 
-        void StopCurrentGame();
+        public void StartNextLevel();
+        void Restart();
+        void StopCurrentGame(bool isWin);
     }
 }

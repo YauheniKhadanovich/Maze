@@ -5,10 +5,11 @@ namespace Modules.GameController.Facade
     public interface IGameControllerFacade
     {
         event Action GameStartRequested;
-        event Action GameStopRequested;
-        
-        void StartNextGame();
+        public event Action<bool> LevelDone;
 
-        void StopCurrentGame();
+        void StartNextLevel();
+        void Restart();
+
+        void StopCurrentGame(bool isWin = false);
     }
 }

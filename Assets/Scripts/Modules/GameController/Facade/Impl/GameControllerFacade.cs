@@ -10,32 +10,37 @@ namespace Modules.GameController.Facade.Impl
         private readonly IGameControllerService _gameControllerService;
         
         public event Action GameStartRequested = delegate { };
-        public event Action GameStopRequested = delegate { };
+        public event Action<bool> LevelDone = delegate { };
 
         public void Initialize()
         {
             _gameControllerService.GameStartRequested += OnGameStartRequested;
-            _gameControllerService.GameStopRequested += OnGameStopRequested;
+            _gameControllerService.LevelDone += OnLevelDone;
+        }
+        
+        private void OnLevelDone(bool isWin)
+        {
+            LevelDone.Invoke(isWin);
         }
 
         private void OnGameStartRequested()
         {
             GameStartRequested.Invoke();
         }
-        
-        private void OnGameStopRequested()
+
+        public void StartNextLevel()
         {
-            GameStopRequested.Invoke();
+            _gameControllerService.StartNextLevel();
+        }
+        
+        public void Restart()
+        {
+            _gameControllerService.Restart();
         }
 
-        public void StartNextGame()
+        public void StopCurrentGame(bool isWin = false)
         {
-            _gameControllerService.StartNextGame();
-        }
-        
-        public void StopCurrentGame()
-        {
-            _gameControllerService.StopCurrentGame();
+            _gameControllerService.StopCurrentGame(isWin);
         }
     }
 }

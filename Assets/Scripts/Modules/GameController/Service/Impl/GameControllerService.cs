@@ -10,7 +10,7 @@ namespace Modules.GameController.Service.Impl
         private readonly IMazeGenerationFacade _mazeGeneration;
 
         public event Action GameStartRequested = delegate { };
-        public event Action GameStopRequested = delegate { };
+        public event Action<bool> LevelDone = delegate { };
 
         private int _currentLevel;
         
@@ -19,16 +19,22 @@ namespace Modules.GameController.Service.Impl
             _currentLevel = 0;
         }
         
-        public void StartNextGame()
+        public void StartNextLevel()
         {
             _currentLevel++;
             _mazeGeneration.GenerateMaze(3 + 2 * _currentLevel, 3 + 2 * _currentLevel);
             GameStartRequested.Invoke();
         }
         
-        public void StopCurrentGame()
+        public void Restart()
         {
-            GameStopRequested.Invoke();
+            _currentLevel = 0;
+            StartNextLevel();
+        }
+        
+        public void StopCurrentGame(bool isWin)
+        {
+            LevelDone.Invoke(isWin);
         }
     }
 }

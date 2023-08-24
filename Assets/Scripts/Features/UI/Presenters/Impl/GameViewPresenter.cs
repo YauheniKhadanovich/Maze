@@ -15,23 +15,43 @@ namespace Features.UI.Presenters.Impl
         public void Initialize()
         {
             _gameView.StartButtonClicked += OnStartClicked;
-            _gameControllerFacade.GameStopRequested += OnGameStopRequested;
+            _gameView.RestartButtonClicked += OnRestartClicked;
+            _gameView.ContinueButtonClicked += OnContinueClicked;
+            _gameControllerFacade.LevelDone += LevelDone;
         }
 
         public void Dispose()
         {
             _gameView.StartButtonClicked -= OnStartClicked;
-            _gameControllerFacade.GameStopRequested -= OnGameStopRequested;
+            _gameView.RestartButtonClicked -= OnRestartClicked;
+            _gameControllerFacade.LevelDone -= LevelDone;
         }
         
         public void OnStartClicked()
         {
-            _gameControllerFacade.StartNextGame();
+            _gameControllerFacade.Restart();
         }
         
-        private void OnGameStopRequested()
+        private void OnRestartClicked()
         {
-            _gameView.ShowMenu();
+            _gameControllerFacade.Restart();
+        }
+        
+        private void OnContinueClicked()
+        {
+            _gameControllerFacade.StartNextLevel();
+        }
+        
+        private void LevelDone(bool isWin)
+        {
+            if (isWin)
+            {
+                _gameView.ShowContinue();
+            }
+            else
+            {
+                _gameView.ShowRestart();
+            }
         }
     }
 }

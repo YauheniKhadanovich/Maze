@@ -1,8 +1,10 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using Features.CameraManagement;
 using Features.Coin.Impl;
 using Features.Diamond.Impl;
+using Features.Floor.Impl;
 using Features.Player.Impl;
 using Modules.GameController.Facade;
 using Modules.MazeGenerator.Data;
@@ -25,31 +27,32 @@ namespace Features.MazeManagement.Impl
         
         public MazeData MazeData => _mazeGenerationFacade.MazeData;
         
-        
         [SerializeField] 
         private DiamondItem _diamondFrefab;
         [SerializeField] 
         private CoinItem _coinFrefab;
         [SerializeField] 
-        private GameObject _floorFrefab;
+        private FloorItem _floorFrefab;
         [SerializeField] 
         private MazePlayer _playerPrefab;
         [SerializeField] 
         private Transform _root;
 
         private MazePlayer _player;
-        private int _diamonds = 0; 
+        private int _diamonds = 0;
+
+        private Dictionary<Vector2Int, FloorItem> _floorItems = new();
 
         public void Initialize()
         {
             _gameControllerFacade.GameStartRequested += OnGameStartRequested;
-            _gameControllerFacade.GameStopRequested += OnGameStopRequested;
+            _gameControllerFacade.LevelDone += OnLevelDone;
         }
 
         public void Dispose()
         {
             _gameControllerFacade.GameStartRequested -= OnGameStartRequested;
-            _gameControllerFacade.GameStopRequested -= OnGameStopRequested;
+            _gameControllerFacade.LevelDone -= OnLevelDone;
         }
         
         private void OnGameStartRequested()
@@ -58,9 +61,12 @@ namespace Features.MazeManagement.Impl
             StartCoroutine(nameof(ClearLevelCoroutine));
         }
         
-        private void OnGameStopRequested()
+        private void OnLevelDone(bool isWin)
         {
-            _player.Disable();
+            if (_player)
+            {
+                _player.Disable();
+            }
         }
         
         private IEnumerator ClearLevelCoroutine()
@@ -68,6 +74,7 @@ namespace Features.MazeManagement.Impl
             if (_root.childCount > 0)
             {
                 Destroy(_root.GetChild(0).gameObject);
+                _floorItems.Clear();
                 yield return null;
             }
 
@@ -107,15 +114,15 @@ namespace Features.MazeManagement.Impl
                             break;
                         case CellType.Start:
                             SpawnPlayer(v.Position);
-                            SpawnFloor(new Vector3(v.Position.x, 0, v.Position.y));
+                            SpawnFloor(v.Position);
                             break;
                         case CellType.Diamond:
                             Instantiate(_diamondFrefab, new Vector3(v.Position.x, 0, v.Position.y), Quaternion.identity, lvlRoot.transform);
-                            SpawnFloor(new Vector3(v.Position.x, 0, v.Position.y));
+                            SpawnFloor(v.Position);
                             break;
                         default:
                             Instantiate(_coinFrefab, new Vector3(v.Position.x, 0, v.Position.y), Quaternion.identity, lvlRoot.transform);
-                            SpawnFloor(new Vector3(v.Position.x, 0, v.Position.y));
+                            SpawnFloor(v.Position);
                             break;
                     }
                 }
@@ -129,29 +136,27 @@ namespace Features.MazeManagement.Impl
                 }
                 _player = Instantiate(_playerPrefab, new Vector3(position.x, 0, position.y), Quaternion.identity, lvlRoot.transform);
                 _player.SetData(this, position);
-                _player.DiamondTaken += OnDiamondTaken;
-                _player.PlayerDestroyed += OnPlayerDestroyed;
             }
 
-            void SpawnFloor(Vector3 position)
+            void SpawnFloor(Vector2Int mazePos)
             {
-                Instantiate(_floorFrefab, position, Quaternion.identity, lvlRoot.transform);
+                var floorItem = Instantiate(_floorFrefab, new Vector3(mazePos.x, 0, mazePos.y), Quaternion.identity, lvlRoot.transform);
+                _floorItems.Add(mazePos, floorItem);
             }
         }
 
-        private void OnDiamondTaken()
+        public void PlayerFailed()
+        {
+            _gameControllerFacade.StopCurrentGame();
+        }
+        
+        public void OnDiamondTaken()
         {
             _diamonds++;
             if (_mazeGenerationFacade.MazeData.DiamondCount == _diamonds)
             {
-                _gameControllerFacade.StopCurrentGame();
+                _gameControllerFacade.StopCurrentGame(true);
             }
-        }
-        
-        private void OnPlayerDestroyed()
-        {
-            _player.DiamondTaken -= OnDiamondTaken;
-            _player.PlayerDestroyed -= OnPlayerDestroyed;
         }
     }
 }

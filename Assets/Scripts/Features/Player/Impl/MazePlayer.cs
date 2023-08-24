@@ -1,4 +1,3 @@
-using System;
 using Features.MazeManagement.Impl;
 using Modules.MazeGenerator.Data;
 using UnityEngine;
@@ -7,14 +6,16 @@ namespace Features.Player.Impl
 {
     public class MazePlayer : MonoBehaviour
     {
-        public event Action DiamondTaken = delegate { };
-        public event Action PlayerDestroyed = delegate { };
+        [SerializeField] 
+        private ParticleSystem _diamondParticlePrefab;
+        [SerializeField] 
+        private ParticleSystem _failParticlePrefab;
         
         private IPlayerInput _playerInput;
         private Vector2Int _mazePosition;
         private MazeManager _mazeManager;
 
-        private bool _isMovementInProgress = false;
+        private bool _isMovementInProgress;
 
         private void Awake()
         {
@@ -23,11 +24,6 @@ namespace Features.Player.Impl
             _playerInput.OnLeft += MoveLeft;
             _playerInput.OnForward += MoveForward;
             _playerInput.OnRight += MoveRight;
-        }
-
-        private void OnDestroy()
-        {
-            PlayerDestroyed.Invoke();
         }
 
         public void SetData(MazeManager mazeManager, Vector2Int startPosition)
@@ -54,11 +50,18 @@ namespace Features.Player.Impl
             }
             
             var destination = new Vector3(_mazePosition.x, 0, _mazePosition.y);
-            transform.position = Vector3.MoveTowards(transform.position, destination, Time.deltaTime * 15f);
+            transform.position = Vector3.MoveTowards(transform.position, destination, Time.deltaTime * 17f);
 
             if (Vector3.Distance(transform.position, destination) < 0.01f)
             {
                 _isMovementInProgress = false;
+                if (_mazeManager.MazeData.GetCell(_mazePosition).Type == CellType.Wall)
+                {
+                    var failPS = Instantiate(_failParticlePrefab, transform.position, Quaternion.LookRotation(Vector3.up), null);
+                    failPS.Play();
+                    _mazeManager.PlayerFailed();
+                    Destroy(gameObject);
+                }
             }
         }
 
@@ -90,7 +93,7 @@ namespace Features.Player.Impl
             }
             
             var nextCell = _mazeManager.MazeData.GetCell(_mazePosition + direction);
-            if (nextCell.Type != CellType.Wall && _mazePosition != nextCell.Position)
+            if (_mazePosition != nextCell.Position)
             {
                 _isMovementInProgress = true;
                 _mazePosition = nextCell.Position;
@@ -101,9 +104,12 @@ namespace Features.Player.Impl
         {
             if (other.gameObject.CompareTag("Diamond"))
             {
+                var diamondPS = Instantiate(_diamondParticlePrefab, other.transform.position, Quaternion.LookRotation(Vector3.up), null);
+                diamondPS.Play();
                 Destroy(other.gameObject);
-                DiamondTaken.Invoke();
+                _mazeManager.OnDiamondTaken();
             }
+            
             if (other.gameObject.CompareTag("Coin"))
             {
                 Destroy(other.gameObject);

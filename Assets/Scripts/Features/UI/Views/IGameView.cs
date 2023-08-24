@@ -5,6 +5,10 @@ namespace Features.UI.Views
     public interface IGameView
     {
         event Action StartButtonClicked;
-        void ShowMenu();
+        event Action RestartButtonClicked;
+        event Action ContinueButtonClicked;
+        
+        void ShowContinue();
+        void ShowRestart();
     }
 }
