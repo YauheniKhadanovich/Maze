@@ -19,6 +19,8 @@ namespace Features.Player.Impl
         private ICameraManager _cameraManager;
         
         [SerializeField] 
+        private ParticleSystem _coinParticlePrefab;
+        [SerializeField] 
         private ParticleSystem _diamondParticlePrefab;
         [SerializeField] 
         private ParticleSystem _failParticlePrefab;
@@ -144,14 +146,22 @@ namespace Features.Player.Impl
         {
             if (other.gameObject.CompareTag("Diamond"))
             {
-                var diamondPS = Instantiate(_diamondParticlePrefab, other.transform.position, Quaternion.LookRotation(Vector3.up), null);
-                diamondPS.Play();
+                if (_diamondParticlePrefab)
+                {
+                    var ps = Instantiate(_diamondParticlePrefab, other.transform.position, Quaternion.LookRotation(Vector3.up), null);
+                    ps.Play();
+                }
                 Destroy(other.gameObject);
                 _gameControllerFacade.ReportDiamondTaken();
             }
             
             if (other.gameObject.CompareTag("Coin"))
             {
+                if (_coinParticlePrefab)
+                {
+                    var ps = Instantiate(_coinParticlePrefab, other.transform.position, Quaternion.LookRotation(Vector3.up), null);
+                    ps.Play();
+                }
                 Destroy(other.gameObject);
             }
         }

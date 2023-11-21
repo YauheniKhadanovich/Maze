@@ -48,6 +48,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c95a0b33ec2d49938352073a8981a786, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _coinParticlePrefab: {fileID: 19884698, guid: df9f212c9f2cc4c068e9437ae3ffe8a4,
+    type: 3}
   _diamondParticlePrefab: {fileID: 5510538634349806220, guid: 532ed3282131b48aeb16c916f06a8006,
     type: 3}
   _failParticlePrefab: {fileID: 6662994303772331933, guid: 53f31aaec2f144594a0e1dc36b75d259,
