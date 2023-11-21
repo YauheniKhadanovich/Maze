@@ -8,6 +8,7 @@ namespace Modules.MazeGenerator.Data
     {
         public Cell[,] Field { get; }
         public int DiamondCount { get; private set; }
+        public int TimeForMaze { get; private set; }
 
         private int _XLength = 0;
         private int _YLength = 0;
@@ -108,6 +109,7 @@ namespace Modules.MazeGenerator.Data
             cell.SetState(CellType.Diamond);
             Field[cell.Position.x, cell.Position.y] = cell;
             DiamondCount++;
+            TimeForMaze++;
         }
         
         private void SetPlayerPosition(Vector2Int position)
@@ -128,6 +130,7 @@ namespace Modules.MazeGenerator.Data
             way.SetState(CellType.Floor);
             Field[way.Position.x, way.Position.y] = way;
 
+            TimeForMaze++;
             return nextCell;
         }
         

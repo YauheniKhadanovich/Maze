@@ -1,15 +1,20 @@
 using System;
+using Modules.Core;
 
 namespace Modules.GameController.Service
 {
     public interface IGameControllerService
     {
-        event Action GameStartRequested;
-        event Action<bool> LevelDone;
-
+        event Action LevelBuildRequested;
+        event Action<LevelResult> LevelDone;
+        event Action GameStarted;
 
         public void StartNextLevel();
         void Restart();
-        void StopCurrentGame(bool isWin);
+        void ReportDiamondTaken();
+        void ReportGameStarted(int mazeDataDiamondCount, int mazeDataTimeForMaze);
+        void TimerTick();
+        void ReportOutOfTime();
+        void ReportPlayerFailed();
     }
 }

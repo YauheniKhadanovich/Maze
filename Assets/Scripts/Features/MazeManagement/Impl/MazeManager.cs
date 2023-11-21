@@ -1,11 +1,12 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using Features.CameraManagement;
 using Features.Coin.Impl;
 using Features.Diamond.Impl;
 using Features.Floor.Impl;
+using Features.Player;
 using Features.Player.Impl;
+using Modules.Core;
 using Modules.GameController.Facade;
 using Modules.MazeGenerator.Data;
 using Modules.MazeGenerator.Facade;
@@ -16,15 +17,17 @@ namespace Features.MazeManagement.Impl
 {
     public class MazeManager : MonoBehaviour, IMazeManager, IInitializable, IDisposable
     {
-        public event Action LevelCleared = delegate { };
+        private event Action LevelCleared = delegate { };
 
+        [Inject]
+        private readonly ILevelTimer _levelTimer;
+        [Inject]
+        private readonly DiContainer _container;
         [Inject] 
         private readonly IGameControllerFacade _gameControllerFacade;
         [Inject] 
         private readonly IMazeGenerationFacade _mazeGenerationFacade;
-        [Inject] 
-        private readonly ICameraManager _cameraManager;
-        
+
         public MazeData MazeData => _mazeGenerationFacade.MazeData;
         
         [SerializeField] 
@@ -38,35 +41,41 @@ namespace Features.MazeManagement.Impl
         [SerializeField] 
         private Transform _root;
 
-        private MazePlayer _player;
-        private int _diamonds = 0;
-
+        private IMazePlayer _player;
         private Dictionary<Vector2Int, FloorItem> _floorItems = new();
 
         public void Initialize()
         {
-            _gameControllerFacade.GameStartRequested += OnGameStartRequested;
+            _gameControllerFacade.LevelBuildRequested += OnLevelBuildRequested;
             _gameControllerFacade.LevelDone += OnLevelDone;
-        }
-
-        public void Dispose()
-        {
-            _gameControllerFacade.GameStartRequested -= OnGameStartRequested;
-            _gameControllerFacade.LevelDone -= OnLevelDone;
+            _gameControllerFacade.GameStarted += OnGameStarted;
+            _levelTimer.TimeOut += OnTimeOut;
+            _levelTimer.TimeTick += OnTimeTick;
         }
         
-        private void OnGameStartRequested()
+        public void Dispose()
+        {
+            _gameControllerFacade.LevelBuildRequested -= OnLevelBuildRequested;
+            _gameControllerFacade.LevelDone -= OnLevelDone;
+            _gameControllerFacade.GameStarted -= OnGameStarted;
+            _levelTimer.TimeOut -= OnTimeOut;
+            _levelTimer.TimeTick -= OnTimeTick;
+        }
+
+        private void OnGameStarted()
+        {
+            _levelTimer.StartTimer(_mazeGenerationFacade.MazeData.TimeForMaze);
+        }
+
+        private void OnLevelBuildRequested()
         {
             LevelCleared += BuildAndStart;
             StartCoroutine(nameof(ClearLevelCoroutine));
         }
         
-        private void OnLevelDone(bool isWin)
+        private void OnLevelDone(LevelResult result)
         {
-            if (_player)
-            {
-                _player.Disable();
-            }
+            _levelTimer.StopTimer();
         }
         
         private IEnumerator ClearLevelCoroutine()
@@ -85,11 +94,7 @@ namespace Features.MazeManagement.Impl
         {
             LevelCleared -= BuildAndStart;
             Build(_mazeGenerationFacade.MazeData);
-            _diamonds = 0;
-            _cameraManager.PlayerCameraSetEnable(true);
-            _cameraManager.NoPlayCameraSetEnable(false);
-            _cameraManager.SetCameraTarget(_player.transform);
-            _player.Enable();
+            _gameControllerFacade.ReportGameStarted(_mazeGenerationFacade.MazeData.DiamondCount,_mazeGenerationFacade.MazeData.TimeForMaze);
         }
 
         private void Build(MazeData mazeData)
@@ -130,12 +135,25 @@ namespace Features.MazeManagement.Impl
             
             void SpawnPlayer(Vector2Int position)
             {
-                if (_player)
+                if (_player != null)
                 {
-                    Destroy(_player);
+                    if (_player is IDisposable disposablePlayer)
+                    {
+                        disposablePlayer.Dispose();
+                    }
+                    if ((MonoBehaviour)_player)
+                    {
+                        Destroy(((MonoBehaviour)_player).gameObject);
+                    }
                 }
-                _player = Instantiate(_playerPrefab, new Vector3(position.x, 0, position.y), Quaternion.identity, lvlRoot.transform);
-                _player.SetData(this, position);
+                _player = _container.InstantiatePrefabForComponent<MazePlayer>(_playerPrefab, new Vector3(position.x, 0, position.y), Quaternion.identity, lvlRoot.transform);
+              
+                if (_player is IInitializable initializablePlayer)
+                {
+                    initializablePlayer.Initialize();
+                }
+                
+                _player.SetData(position);
             }
 
             void SpawnFloor(Vector2Int mazePos)
@@ -144,19 +162,20 @@ namespace Features.MazeManagement.Impl
                 _floorItems.Add(mazePos, floorItem);
             }
         }
-
-        public void PlayerFailed()
+        
+        public void ReportPlayerFailed()
         {
-            _gameControllerFacade.StopCurrentGame();
+            _gameControllerFacade.ReportPlayerFailed();
         }
         
-        public void OnDiamondTaken()
+        private void OnTimeTick(int timeInSeconds)
         {
-            _diamonds++;
-            if (_mazeGenerationFacade.MazeData.DiamondCount == _diamonds)
-            {
-                _gameControllerFacade.StopCurrentGame(true);
-            }
+            _gameControllerFacade.ReportTimerTick(timeInSeconds);
+        }
+        
+        private void OnTimeOut()
+        {
+            _gameControllerFacade.ReportOutOfTime();
         }
     }
 }

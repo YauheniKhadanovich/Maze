@@ -1,5 +1,7 @@
 using System;
+using Modules.Core;
 using Modules.GameController.Service;
+using UnityEngine;
 using Zenject;
 
 namespace Modules.GameController.Facade.Impl
@@ -9,38 +11,66 @@ namespace Modules.GameController.Facade.Impl
         [Inject] 
         private readonly IGameControllerService _gameControllerService;
         
-        public event Action GameStartRequested = delegate { };
-        public event Action<bool> LevelDone = delegate { };
+        public event Action LevelBuildRequested = delegate { };
+        public event Action GameStarted  = delegate { };
+        public event Action<LevelResult> LevelDone = delegate { };
+        public event Action<int> TimeUpdated = delegate { };
 
         public void Initialize()
         {
-            _gameControllerService.GameStartRequested += OnGameStartRequested;
+            _gameControllerService.LevelBuildRequested += OnLevelBuildRequested;
             _gameControllerService.LevelDone += OnLevelDone;
-        }
-        
-        private void OnLevelDone(bool isWin)
-        {
-            LevelDone.Invoke(isWin);
+            _gameControllerService.GameStarted += OnGameStarted;
         }
 
-        private void OnGameStartRequested()
+        private void OnGameStarted()
         {
-            GameStartRequested.Invoke();
+            GameStarted.Invoke();
         }
 
-        public void StartNextLevel()
+        private void OnLevelDone(LevelResult result)
+        {
+            LevelDone.Invoke(result);
+        }
+
+        private void OnLevelBuildRequested()
+        {
+            LevelBuildRequested.Invoke();
+        }
+
+        public void OnContinueClicked()
         {
             _gameControllerService.StartNextLevel();
         }
         
-        public void Restart()
+        public void OnRestartClicked()
         {
             _gameControllerService.Restart();
         }
 
-        public void StopCurrentGame(bool isWin = false)
+        public void ReportOutOfTime()
         {
-            _gameControllerService.StopCurrentGame(isWin);
+            _gameControllerService.ReportOutOfTime();
+        }
+
+        public void ReportPlayerFailed()
+        {
+            _gameControllerService.ReportPlayerFailed();
+        }
+
+        public void ReportDiamondTaken()
+        {
+            _gameControllerService.ReportDiamondTaken();
+        }
+
+        public void ReportTimerTick(int timeInSeconds)
+        {
+            TimeUpdated.Invoke(timeInSeconds);
+        }
+
+        public void ReportGameStarted(int mazeDataDiamondCount, int mazeDataTimeForMaze)
+        {
+            _gameControllerService.ReportGameStarted(mazeDataDiamondCount, mazeDataTimeForMaze);
         }
     }
 }

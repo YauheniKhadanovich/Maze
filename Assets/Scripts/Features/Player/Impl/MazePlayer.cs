@@ -1,11 +1,23 @@
-using Features.MazeManagement.Impl;
+using System;
+using Features.CameraManagement;
+using Features.MazeManagement;
+using Modules.Core;
+using Modules.GameController.Facade;
 using Modules.MazeGenerator.Data;
 using UnityEngine;
+using Zenject;
 
 namespace Features.Player.Impl
 {
-    public class MazePlayer : MonoBehaviour
+    public class MazePlayer : MonoBehaviour, IMazePlayer, IInitializable, IDisposable
     {
+        [Inject] 
+        private readonly IMazeManager _mazeManager;
+        [Inject] 
+        private readonly IGameControllerFacade _gameControllerFacade;
+        [Inject] 
+        private ICameraManager _cameraManager;
+        
         [SerializeField] 
         private ParticleSystem _diamondParticlePrefab;
         [SerializeField] 
@@ -13,9 +25,19 @@ namespace Features.Player.Impl
         
         private IPlayerInput _playerInput;
         private Vector2Int _mazePosition;
-        private MazeManager _mazeManager;
-
         private bool _isMovementInProgress;
+
+        public void Initialize()
+        {
+            _gameControllerFacade.GameStarted += OnGameStarted;
+            _gameControllerFacade.LevelDone += OnLevelDone;
+        }
+        
+        public void Dispose()
+        {
+            _gameControllerFacade.LevelDone -= OnLevelDone;
+            _gameControllerFacade.GameStarted -= OnGameStarted;
+        }
 
         private void Awake()
         {
@@ -25,19 +47,32 @@ namespace Features.Player.Impl
             _playerInput.OnForward += MoveForward;
             _playerInput.OnRight += MoveRight;
         }
-
-        public void SetData(MazeManager mazeManager, Vector2Int startPosition)
+        
+        private void OnGameStarted()
         {
-            _mazeManager = mazeManager;
+            _cameraManager.PlayerCameraSetEnable(true);
+            _cameraManager.NoPlayCameraSetEnable(false);
+            _cameraManager.SetCameraTarget(transform);
+            EnableInput();
+        }
+
+        private void OnLevelDone(LevelResult obj)
+        {
+            DisableInput();
+            DestroyPlayer();
+        }
+
+        public void SetData(Vector2Int startPosition)
+        {
             _mazePosition = startPosition;
         }
 
-        public void Enable()
+        private void EnableInput()
         {
             _playerInput.EnablePlayer();
         }
-        
-        public void Disable()
+
+        private void DisableInput()
         {
             _playerInput.DisablePlayer();
         }
@@ -57,12 +92,17 @@ namespace Features.Player.Impl
                 _isMovementInProgress = false;
                 if (_mazeManager.MazeData.GetCell(_mazePosition).Type == CellType.Wall)
                 {
-                    var failPS = Instantiate(_failParticlePrefab, transform.position, Quaternion.LookRotation(Vector3.up), null);
-                    failPS.Play();
-                    _mazeManager.PlayerFailed();
-                    Destroy(gameObject);
+                    _mazeManager.ReportPlayerFailed();
+                    DestroyPlayer();
                 }
             }
+        }
+
+        private void DestroyPlayer()
+        {
+            var failPS = Instantiate(_failParticlePrefab, transform.position, Quaternion.LookRotation(Vector3.up), null);
+            failPS.Play();
+            Destroy(gameObject);
         }
 
         private void MoveForward()
@@ -107,7 +147,7 @@ namespace Features.Player.Impl
                 var diamondPS = Instantiate(_diamondParticlePrefab, other.transform.position, Quaternion.LookRotation(Vector3.up), null);
                 diamondPS.Play();
                 Destroy(other.gameObject);
-                _mazeManager.OnDiamondTaken();
+                _gameControllerFacade.ReportDiamondTaken();
             }
             
             if (other.gameObject.CompareTag("Coin"))

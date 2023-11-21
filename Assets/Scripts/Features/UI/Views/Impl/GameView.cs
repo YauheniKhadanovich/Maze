@@ -1,4 +1,5 @@
 using System;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -16,6 +17,10 @@ namespace Features.UI.Views.Impl
         private Button _restartButton;
         [SerializeField] 
         private Button _continueButton;
+        [SerializeField] 
+        private Transform _timerPanel;
+        [SerializeField] 
+        private TMP_Text _timer;
         
         private void Awake()
         {
@@ -29,6 +34,7 @@ namespace Features.UI.Views.Impl
             _startButton.gameObject.SetActive(true);   
             _restartButton.gameObject.SetActive(false);   
             _continueButton.gameObject.SetActive(false);
+            _timerPanel.gameObject.SetActive(false);
         }
 
         private void OnStartClicked()
@@ -40,23 +46,35 @@ namespace Features.UI.Views.Impl
         private void OnContinueClicked()
         {
             ContinueButtonClicked.Invoke();
-            _continueButton.gameObject.SetActive(false);   
         }
         
         private void OnRestartClicked()
         {
             RestartButtonClicked.Invoke();
-            _restartButton.gameObject.SetActive(false);   
         }
         
         public void ShowContinue()
         {
             _continueButton.gameObject.SetActive(true);
+            _timerPanel.gameObject.SetActive(false);
         }
         
         public void ShowRestart()
         {
             _restartButton.gameObject.SetActive(true);
+            _timerPanel.gameObject.SetActive(false);
+        }
+
+        public void ShowGameState()
+        {
+            _continueButton.gameObject.SetActive(false);
+            _restartButton.gameObject.SetActive(false);   
+            _timerPanel.gameObject.SetActive(true);
+        }
+
+        public void UpdateTimer(int timeInSeconds)
+        {
+            _timer.text = $"{timeInSeconds / 60:00}:{timeInSeconds % 60:00}";
         }
     }
 }

@@ -1,5 +1,6 @@
 using System;
 using Features.UI.Views;
+using Modules.Core;
 using Modules.GameController.Facade;
 using Zenject;
 
@@ -17,41 +18,62 @@ namespace Features.UI.Presenters.Impl
             _gameView.StartButtonClicked += OnStartClicked;
             _gameView.RestartButtonClicked += OnRestartClicked;
             _gameView.ContinueButtonClicked += OnContinueClicked;
-            _gameControllerFacade.LevelDone += LevelDone;
+            _gameControllerFacade.LevelDone += OnLevelDone;
+            _gameControllerFacade.TimeUpdated += OnTimeUpdated;
+            _gameControllerFacade.GameStarted += OnGameStarted;
         }
-
+        
         public void Dispose()
         {
             _gameView.StartButtonClicked -= OnStartClicked;
             _gameView.RestartButtonClicked -= OnRestartClicked;
-            _gameControllerFacade.LevelDone -= LevelDone;
+            _gameView.ContinueButtonClicked -= OnContinueClicked;
+            _gameControllerFacade.LevelDone -= OnLevelDone;
+            _gameControllerFacade.TimeUpdated -= OnTimeUpdated;
+            _gameControllerFacade.GameStarted -= OnGameStarted;
         }
-        
+
         public void OnStartClicked()
         {
-            _gameControllerFacade.Restart();
+            _gameControllerFacade.OnRestartClicked();
         }
         
         private void OnRestartClicked()
         {
-            _gameControllerFacade.Restart();
+            _gameControllerFacade.OnRestartClicked();
         }
         
         private void OnContinueClicked()
         {
-            _gameControllerFacade.StartNextLevel();
+            _gameControllerFacade.OnContinueClicked();
         }
         
-        private void LevelDone(bool isWin)
+        private void OnTimeUpdated(int time)
         {
-            if (isWin)
+            _gameView.UpdateTimer(time);
+        }
+        
+        private void OnLevelDone(LevelResult result)
+        {
+            switch (result)
             {
-                _gameView.ShowContinue();
+                case LevelResult.Win:
+                    _gameView.ShowContinue();
+                    break;
+                case LevelResult.Fail:
+                    _gameView.ShowRestart();
+                    break;
+                case LevelResult.OutOfTime:
+                    _gameView.ShowRestart();
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(result), result, null);
             }
-            else
-            {
-                _gameView.ShowRestart();
-            }
+        }
+        
+        private void OnGameStarted()
+        {
+            _gameView.ShowGameState();
         }
     }
 }
