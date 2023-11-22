@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 554340560698453016}
   - component: {fileID: 2611281348085084291}
   - component: {fileID: 4159614046016975960}
+  - component: {fileID: 8159719460355877278}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -54,6 +55,7 @@ MonoBehaviour:
     type: 3}
   _failParticlePrefab: {fileID: 6662994303772331933, guid: 53f31aaec2f144594a0e1dc36b75d259,
     type: 3}
+  _playerAnimation: {fileID: 8159719460355877278}
 --- !u!114 &554340560698453016
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -95,6 +97,26 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 0.66, y: 0.66, z: 0.66}
   m_Center: {x: 0, y: 0.25, z: 0}
+--- !u!95 &8159719460355877278
+Animator:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 554340560698453017}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 59c327f90cea34bf39371efa075f6da0, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
 --- !u!1 &554340562318060677
 GameObject:
   m_ObjectHideFlags: 0

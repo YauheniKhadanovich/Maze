@@ -11,6 +11,8 @@ namespace Features.Player.Impl
 {
     public class MazePlayer : MonoBehaviour, IMazePlayer, IInitializable, IDisposable
     {
+        private static readonly int Move = Animator.StringToHash("Move");
+        
         [Inject]
         private readonly IMazeManager _mazeManager;
         [Inject]
@@ -24,6 +26,8 @@ namespace Features.Player.Impl
         private ParticleSystem _diamondParticlePrefab;
         [SerializeField] 
         private ParticleSystem _failParticlePrefab;
+        [SerializeField] 
+        private Animator _playerAnimation;
         
         private IPlayerInput _playerInput;
         private Vector2Int _mazePosition;
@@ -134,6 +138,7 @@ namespace Features.Player.Impl
                 return;
             }
             
+            _playerAnimation.SetTrigger(Move);
             var nextCell = _mazeManager.MazeData.GetCell(_mazePosition + direction);
             if (_mazePosition != nextCell.Position)
             {

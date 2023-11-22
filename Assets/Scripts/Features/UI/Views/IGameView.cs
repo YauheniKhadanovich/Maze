@@ -1,4 +1,5 @@
 using System;
+using Modules.Core;
 
 namespace Features.UI.Views
 {
@@ -9,7 +10,7 @@ namespace Features.UI.Views
         event Action ContinueButtonClicked;
         
         void ShowContinue();
-        void ShowRestart();
+        void ShowRestart(LevelResult result);
         void UpdateTimer(int timeInSeconds);
         void ShowGameState(int levelNum);
     }

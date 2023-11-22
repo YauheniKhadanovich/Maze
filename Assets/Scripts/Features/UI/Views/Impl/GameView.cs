@@ -1,4 +1,5 @@
 using System;
+using Modules.Core;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -15,6 +16,8 @@ namespace Features.UI.Views.Impl
         private Button _startButton;
         [SerializeField] 
         private Button _restartButton;
+        [SerializeField] 
+        private TMP_Text _restartText;
         [SerializeField] 
         private Button _continueButton;
         [SerializeField] 
@@ -61,10 +64,16 @@ namespace Features.UI.Views.Impl
             _headerGamePanel.gameObject.SetActive(false);
         }
         
-        public void ShowRestart()
+        public void ShowRestart(LevelResult result)
         {
             _restartButton.gameObject.SetActive(true);
             _headerGamePanel.gameObject.SetActive(false);
+            _restartText.text = result switch
+            {
+                LevelResult.Fail => "Fail!",
+                LevelResult.OutOfTime => "Time is over!",
+                _ => _restartText.text
+            };
         }
 
         public void ShowGameState(int levelNum)

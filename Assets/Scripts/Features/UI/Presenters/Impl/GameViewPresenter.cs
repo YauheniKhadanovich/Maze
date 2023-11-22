@@ -61,10 +61,10 @@ namespace Features.UI.Presenters.Impl
                     _gameView.ShowContinue();
                     break;
                 case LevelResult.Fail:
-                    _gameView.ShowRestart();
+                    _gameView.ShowRestart(result);
                     break;
                 case LevelResult.OutOfTime:
-                    _gameView.ShowRestart();
+                    _gameView.ShowRestart(result);
                     break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(result), result, null);
