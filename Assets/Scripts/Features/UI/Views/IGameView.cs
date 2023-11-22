@@ -11,6 +11,6 @@ namespace Features.UI.Views
         void ShowContinue();
         void ShowRestart();
         void UpdateTimer(int timeInSeconds);
-        void ShowGameState();
+        void ShowGameState(int levelNum);
     }
 }

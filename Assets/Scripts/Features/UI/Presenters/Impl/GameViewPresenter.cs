@@ -71,9 +71,9 @@ namespace Features.UI.Presenters.Impl
             }
         }
         
-        private void OnGameStarted()
+        private void OnGameStarted(int levelNum)
         {
-            _gameView.ShowGameState();
+            _gameView.ShowGameState(levelNum);
         }
     }
 }

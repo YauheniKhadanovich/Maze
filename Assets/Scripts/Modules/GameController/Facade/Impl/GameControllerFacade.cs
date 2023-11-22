@@ -1,7 +1,6 @@
 using System;
 using Modules.Core;
 using Modules.GameController.Service;
-using UnityEngine;
 using Zenject;
 
 namespace Modules.GameController.Facade.Impl
@@ -12,7 +11,7 @@ namespace Modules.GameController.Facade.Impl
         private readonly IGameControllerService _gameControllerService;
         
         public event Action LevelBuildRequested = delegate { };
-        public event Action GameStarted  = delegate { };
+        public event Action<int> GameStarted  = delegate { };
         public event Action<LevelResult> LevelDone = delegate { };
         public event Action<int> TimeUpdated = delegate { };
 
@@ -23,9 +22,9 @@ namespace Modules.GameController.Facade.Impl
             _gameControllerService.GameStarted += OnGameStarted;
         }
 
-        private void OnGameStarted()
+        private void OnGameStarted(int level)
         {
-            GameStarted.Invoke();
+            GameStarted.Invoke(level);
         }
 
         private void OnLevelDone(LevelResult result)

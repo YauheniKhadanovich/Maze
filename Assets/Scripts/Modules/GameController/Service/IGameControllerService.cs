@@ -7,7 +7,7 @@ namespace Modules.GameController.Service
     {
         event Action LevelBuildRequested;
         event Action<LevelResult> LevelDone;
-        event Action GameStarted;
+        event Action<int> GameStarted;
 
         public void StartNextLevel();
         void Restart();

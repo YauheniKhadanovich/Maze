@@ -6,7 +6,7 @@ namespace Modules.GameController.Facade
     public interface IGameControllerFacade
     {
         event Action LevelBuildRequested;
-        event Action GameStarted;
+        event Action<int> GameStarted;
         public event Action<LevelResult> LevelDone;
         public event Action<int> TimeUpdated;
 

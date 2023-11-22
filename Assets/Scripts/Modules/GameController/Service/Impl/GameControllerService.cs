@@ -10,7 +10,7 @@ namespace Modules.GameController.Service.Impl
         [Inject] private readonly IMazeGenerationFacade _mazeGeneration;
 
         public event Action LevelBuildRequested = delegate { };
-        public event Action GameStarted = delegate { };
+        public event Action<int> GameStarted = delegate { };
         public event Action<LevelResult> LevelDone = delegate { };
 
         private int _currentLevel;
@@ -48,7 +48,7 @@ namespace Modules.GameController.Service.Impl
         {
             _levelDiamonds = mazeDataDiamondCount;
             _levelTime = mazeDataTimeForMaze;
-            GameStarted.Invoke();
+            GameStarted.Invoke(_currentLevel);
         }
 
         public void TimerTick()

@@ -62,7 +62,7 @@ namespace Features.MazeManagement.Impl
             _levelTimer.TimeTick -= OnTimeTick;
         }
 
-        private void OnGameStarted()
+        private void OnGameStarted(int level)
         {
             _levelTimer.StartTimer(_mazeGenerationFacade.MazeData.TimeForMaze);
         }

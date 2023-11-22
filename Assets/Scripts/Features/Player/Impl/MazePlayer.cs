@@ -11,12 +11,12 @@ namespace Features.Player.Impl
 {
     public class MazePlayer : MonoBehaviour, IMazePlayer, IInitializable, IDisposable
     {
-        [Inject] 
+        [Inject]
         private readonly IMazeManager _mazeManager;
-        [Inject] 
+        [Inject]
         private readonly IGameControllerFacade _gameControllerFacade;
-        [Inject] 
-        private ICameraManager _cameraManager;
+        [Inject]
+        private readonly ICameraManager _cameraManager;
         
         [SerializeField] 
         private ParticleSystem _coinParticlePrefab;
@@ -50,7 +50,7 @@ namespace Features.Player.Impl
             _playerInput.OnRight += MoveRight;
         }
         
-        private void OnGameStarted()
+        private void OnGameStarted(int level)
         {
             _cameraManager.PlayerCameraSetEnable(true);
             _cameraManager.NoPlayCameraSetEnable(false);
